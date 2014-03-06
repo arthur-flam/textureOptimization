@@ -10,20 +10,6 @@ using namespace cv;
 using namespace std;
 
 
-// TODO
-// - color
-// - robust optimization 
-// - graph évolution energie vs iterations
-// - test sur toutes les images
-
-
-// What I did not do:
-// - the authors use a memory efficient kd tree. They only record the position of the source and recover more info as needed.
-// - we could compute the kdtree only once per scale level
-//      * I ran into segfaults errors when I tried...
-// - we could use a different kind of kdtree
-// - we could get rig of edge effects using some padding
-
 synth_texture::synth_texture(Mat texture, Size size){
   out_size = size;
   raw_image = texture;

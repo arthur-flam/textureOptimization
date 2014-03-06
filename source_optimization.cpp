@@ -17,7 +17,7 @@ void synth_texture::update_neighborhoods(){
 
 	energy_previous = energy;
 	energy=0;
-	flann::Index kdtree(features, flann::KDTreeIndexParams(5));
+	flann::Index kdtree(features, flann::KMeansIndexParams(4));
 	cout << "...updating origins" << endl;
 	for(int v=grid_step; v<=out_height-grid_step; v+=grid_step){
 		for(int h=grid_step; h<=out_width-grid_step; h+=grid_step){
