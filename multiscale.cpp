@@ -30,17 +30,25 @@ void synth_texture::update_level(int level){
 		break;
 	} 
 	pixelsInNeighborhood = grid_step*grid_step*4;
-	Size current_size_out = Size((int) (out_size.width/scale), (int)(out_size.height/scale));
+	current_size_out = Size((int) (out_size.width/scale), (int)(out_size.height/scale));
 	Size current_size_in = Size(raw_image.size().width/scale, raw_image.size().height/scale);
 	cout << "current size out     :" << current_size_out << endl;
 	cout << "current size texture :" << current_size_in << endl;
 	if(level==0)
-		out_image = Mat(current_size_out, CV_8UC1);
-	else{
-		Mat out_image_old = out_image;
-		resize(out_image_old, out_image, current_size_out, 0, 0, INTER_CUBIC);
-	}
+		out_image = Mat(current_size_out, CV_8UC3);
+	Mat out_image_old = out_image;
+	out_image = Mat(current_size_out, CV_8UC3);
+	resize(out_image_old, out_image, current_size_out, 0, 0, INTER_CUBIC);
+
+	image = Mat(current_size_in, CV_8UC3);
 	resize(raw_image, image, current_size_in);
+
+	// black and white versions
+	out_image_bw = Mat(current_size_out, CV_8UC1);
+	image_bw = Mat(current_size_in, CV_8UC1);
+	cvtColor(out_image, out_image_bw, CV_BGR2GRAY);
+	cvtColor(image, image_bw, CV_BGR2GRAY);
+
 	Zp = Mat(out_size, CV_8UC2);
 	out_width  = out_image.size().width;
 	in_width  = image.size().width;

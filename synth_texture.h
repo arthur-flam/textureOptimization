@@ -14,16 +14,16 @@ using namespace std;
 
 class synth_texture{
 private:
-  Mat raw_image;          // input texture
+  Mat raw_image;               // input texture
   int out_width, out_height, in_width, in_height;
-  int grid_step, scale;   // grid parameter, also half neighborhood width
-  Size out_size;          // size of the current synthetized image
+  int grid_step, scale;        // grid parameter, also half neighborhood width
+  Size out_size,current_size_out;// size of the wanted/current synthetized image
 public:
-  Mat image;              // input texture, rescaled as needed
-  Mat out_image;          // output image
-  Mat Zp;                 // source patch position for each pixel
+  Mat image, image_bw;         // input texture, rescaled as needed
+  Mat out_image, out_image_bw; // output image
+  Mat Zp;                      // source patch position for each pixel
   int max_iter;
-  Size size;              // the size we want in the end
+  Size size;                   // the size we want in the end
 
   Mat features;
   int pixelsInNeighborhood;
