@@ -18,15 +18,15 @@ using namespace std;
 
 
 // What I did not do:
+// - the authors use a memory efficient kd tree. They only record the position of the source and recover more info as needed.
 // - we could compute the kdtree only once per scale level
 //      * I ran into segfaults errors when I tried...
 // - we could use a different kind of kdtree
-//      * indeed
 // - we could get rig of edge effects using some padding
 
 synth_texture::synth_texture(Mat texture, Size size){
   out_size = size;
-  cvtColor(texture, raw_image, CV_BGR2GRAY);
+  raw_image = texture;
   max_iter=500;
   level=0;
   update_level(level);
@@ -43,13 +43,16 @@ void synth_texture::synthetize(){
     moveWindow("Output", 10, 50);
     moveWindow("Texture", 10, 500); waitKey(10);
 
+    //imshow( "Output", out_image_bw );imshow( "Texture", image_bw );waitKey(1000);
+
     // Initialize neighboroods randomly 
     randu(Zp, Scalar(grid_step+1,grid_step+1), Scalar(in_width-grid_step-1, in_height-grid_step-1));
     for(int iter=1;iter<max_iter;++iter){
       // Alternatively optimize for energy and source locations
       cout << "==== iteration [" << iter << "] ===="<<endl;
       minimize_energy();
-      imshow( "Output", out_image );imshow( "Texture", image );waitKey(10);
+      imshow( "Output", out_image );imshow( "Texture", image );waitKey(1000);
+      //return;
       update_neighborhoods();
 
       // Change scale if needed
@@ -80,7 +83,7 @@ void synth_texture::synthetize(){
     return -1;
   }
   Mat image;
-  image = imread(argv[1], CV_LOAD_IMAGE_COLOR);        // vs CV_LOAD_IMAGE_GRAYSCALE
+  image = imread(argv[1], CV_LOAD_IMAGE_COLOR);
   if(! image.data )
   {
     cout <<  "Could not open or find the image" << std::endl ;
