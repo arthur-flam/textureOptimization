@@ -50,21 +50,21 @@ void synth_texture::solver_to_image(){
       out_image.at<Vec3b>(v,h) = colors_p;
    }
 }
-out_image_bw = Mat(current_size_out, CV_8UC1);
-cvtColor(out_image, out_image_bw, CV_BGR2GRAY);
 };
 
 // send image information to solver
 void synth_texture::setup_matrix(){
   nlBegin(NL_MATRIX);
   int counter=0;
-    // for all points    
+  Vec3d sum_color_sources;
+  int n_grid; 
+   // for all points    
   for(int v=0; v<out_height; ++v){
     for(int h=0; h<out_width; ++h){
 	     Point p = Point(h, v); // x,y
 	     // for neighbooring gridpoints
-	     Vec3d sum_color_sources=Vec3d(0,0,0); // double pour éviter les overflows.....
-	     int n_grid=0;
+	     sum_color_sources=Vec3d(0,0,0); // double pour éviter les overflows.....
+	     n_grid=0;
 	     for(int h_dir=0; h_dir<2;++h_dir){
          for(int v_dir=0; v_dir<2; ++v_dir){
           int h_to_grid = -(h % grid_step) + h_dir*grid_step;

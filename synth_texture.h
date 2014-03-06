@@ -19,8 +19,8 @@ private:
   int grid_step, scale;        // grid parameter, also half neighborhood width
   Size out_size,current_size_out;// size of the wanted/current synthetized image
 public:
-  Mat image, image_bw;         // input texture, rescaled as needed
-  Mat out_image, out_image_bw; // output image
+  Mat image;                   // input texture, rescaled as needed
+  Mat out_image;               // output image
   Mat Zp;                      // source patch position for each pixel
   int max_iter;
   Size size;                   // the size we want in the end

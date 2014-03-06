@@ -43,12 +43,6 @@ void synth_texture::update_level(int level){
 	image = Mat(current_size_in, CV_8UC3);
 	resize(raw_image, image, current_size_in);
 
-	// black and white versions
-	out_image_bw = Mat(current_size_out, CV_8UC1);
-	image_bw = Mat(current_size_in, CV_8UC1);
-	cvtColor(out_image, out_image_bw, CV_BGR2GRAY);
-	cvtColor(image, image_bw, CV_BGR2GRAY);
-
 	Zp = Mat(out_size, CV_8UC2);
 	out_width  = out_image.size().width;
 	in_width  = image.size().width;
