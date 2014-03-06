@@ -2,6 +2,7 @@
 
 
 void synth_texture::minimize_energy(){
+    //resize(image, out_image, current_size_out);
   nlNewContext(); 
   nlSolverParameteri(NL_PRECONDITIONER, NL_PRECOND_JACOBI);
   nlSolverParameteri(NL_NB_VARIABLES, out_width*out_height*3);
@@ -12,14 +13,7 @@ void synth_texture::minimize_energy(){
   setup_matrix() ;
   nlEnd(NL_SYSTEM) ;
 
-
-
-  //cout << "texture test" << endl;
-  //  imshow( "Texture", image );waitKey(1000);
-  solver_to_image();
-   //imshow( "Output", out_image );imshow( "Texture", image );waitKey(10000);
-  //cout << "texture test after S2I" << endl;
-    //imshow( "Texture", image );waitKey(10000);
+   //solver_to_image();
     //return;
 
   std::cout << "...solving" << std::endl ;
@@ -37,7 +31,7 @@ void synth_texture::image_to_solver(){
   for(int v=0; v<out_height; ++v){
     for(int h=0; h<out_width; ++h){
       for(int color=0; color<3; ++color){
-        float var = out_image.at<Vec3b>(v,h)[color];
+        int var = out_image.at<Vec3b>(v,h)[color];
         nlSetVariable(counter++, (NLdouble) var);
      }
   }
@@ -69,7 +63,7 @@ void synth_texture::setup_matrix(){
     for(int h=0; h<out_width; ++h){
 	     Point p = Point(h, v); // x,y
 	     // for neighbooring gridpoints
-	     Vec3b sum_color_sources=Vec3b(0,0,0);
+	     Vec3d sum_color_sources=Vec3d(0,0,0); // double pour éviter les overflows.....
 	     int n_grid=0;
 	     for(int h_dir=0; h_dir<2;++h_dir){
          for(int v_dir=0; v_dir<2; ++v_dir){
@@ -83,12 +77,11 @@ void synth_texture::setup_matrix(){
 	        Vec2b source_point = Zp.at<Vec2b>(grid_point); // source gridpoints coordinates in texture
 	        Point source_coords = Point(source_point[0]-h_to_grid, source_point[1]-v_to_grid);
 	        for(int color=0; color<3; ++color)
-             sum_color_sources[color] += image.at<Vec3b>(source_coords)[color];
+             sum_color_sources[color] += (double) image.at<Vec3b>(source_coords)[color];
          }
         }
-        cout << sum_color_sources << endl;
         for(int color=0; color<3; ++color){
-   	     nlRowParameterd(NL_RIGHT_HAND_SIDE, (NLdouble) (-sum_color_sources[color]/n_grid));     // b term
+           nlRowParameterd(NL_RIGHT_HAND_SIDE, (NLdouble) -sum_color_sources[color]/n_grid);     // b term
    	     nlBegin(NL_ROW);
    	     nlCoefficient(counter++, (NLdouble) 1);
    	     nlEnd(NL_ROW);

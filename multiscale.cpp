@@ -34,13 +34,13 @@ void synth_texture::update_level(int level){
 	Size current_size_in = Size(raw_image.size().width/scale, raw_image.size().height/scale);
 	cout << "current size out     :" << current_size_out << endl;
 	cout << "current size texture :" << current_size_in << endl;
-	if(level==0){
+	if(level==0)
 		out_image = Mat(current_size_out, CV_8UC3);
-	}
-	else{
-		Mat out_image_old = out_image;
-		resize(out_image_old, out_image, current_size_out, 0, 0, INTER_CUBIC);
-	}
+	Mat out_image_old = out_image;
+	out_image = Mat(current_size_out, CV_8UC3);
+	resize(out_image_old, out_image, current_size_out, 0, 0, INTER_CUBIC);
+
+	image = Mat(current_size_in, CV_8UC3);
 	resize(raw_image, image, current_size_in);
 
 	// black and white versions

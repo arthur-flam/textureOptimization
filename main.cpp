@@ -98,8 +98,6 @@ void synth_texture::synthetize(){
   out.synthetize();
   
   // 3. Output and save result
-  namedWindow( "Display window", WINDOW_AUTOSIZE );    // Create a window for display.
-  imshow( "Display window", out.out_image );           // Show our image inside it.
   imwrite( "out.jpg", out.out_image );
 
   waitKey(0);                                          // Wait for a keystroke in the window
