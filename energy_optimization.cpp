@@ -82,9 +82,11 @@ void synth_texture::setup_matrix(){
 	       Point source_coords = Point(source_point[0]-h_to_grid, source_point[1]-v_to_grid);
           
           // Robust optimization
-          // -> is the gridpoint close ?
           if(grid_point.x<=current_size_out.width-grid_step && grid_point.y<=current_size_out.height-grid_step && grid_point.x>=grid_step && grid_point.y>=grid_step){
-             weight_spatial = grid_step - sqrt(to_grid_point.x*to_grid_point.x + to_grid_point.y*to_grid_point.y)/grid_step;
+             // -> is the gridpoint close ?
+             double dist = sqrt(to_grid_point.x*to_grid_point.x + to_grid_point.y*to_grid_point.y);
+             //weight_spatial = 1;
+             weight_spatial = max(0.01,exp(-dist*dist/2/(grid_step*grid_step/9)));             
              // -> is this gridpoint an outlier ?
              Mat n_source = extract_neighborhood(image ,source_point[0], source_point[1]);
              //cout << ".........done neighs1" << endl ;
@@ -94,7 +96,8 @@ void synth_texture::setup_matrix(){
              Mat diff = n_out-n_source;
              double norm = sqrt(diff.dot(diff));
              double r=0.8;
-             weight_similarity = min(pow(norm,r-2),1.0);
+             weight_similarity = max(min(pow(norm,r-2),10000.0),0.0001);
+             //weight_similarity = 1;
           }
           double weight = weight_similarity*weight_spatial;
           sum_weight+=weight;

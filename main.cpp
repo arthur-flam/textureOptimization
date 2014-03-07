@@ -10,7 +10,7 @@ synth_texture::synth_texture(Mat texture, Size size){
   max_iter=50;
   level=0;
   update_level(level);
-  color=COLOR_BW; // for source optimization. /or COLOR_RGB 
+  color=COLOR_RGB; // for source optimization. /or COLOR_RGB 
 };
 
 Mat synth_texture::extract_neighborhood(Mat M, int h, int v){
@@ -40,7 +40,7 @@ void synth_texture::synthetize(){
       double treshold = pow(10,-level-1);
       cout << "...improvement: " << improv;
       cout << " (next level: 10e" << -level-1 << ")" << endl;
-      if(improv<treshold || iter_at_scale>10){ // we refine progressively
+      if(improv<treshold || iter_at_scale>9){ // we refine progressively
        iter_at_scale=1;
        if(level>5) return;
        update_level(++level);
@@ -73,6 +73,7 @@ void synth_texture::synthetize(){
 
   // 2. Create synthesized image
   Size size =  Size(image.size().width*2,image.size().height*2);
+  Size size =  Size(256,256);
   cout << "input size  : " << image.size() << endl;
   cout << "output size : " << size << endl;
   synth_texture out = synth_texture(image,size); 
@@ -84,7 +85,7 @@ void synth_texture::synthetize(){
   imwrite(filename,out.out_image);
 
 
-  waitKey(0);                                          // Wait for a keystroke in the window
+  waitKey(10);
   cout << "programm ended" << endl;
   return 0;
 }

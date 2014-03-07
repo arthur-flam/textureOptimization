@@ -19,7 +19,7 @@ void synth_texture::update_level(int level){
 		break;
 		case 3:
 		scale=1;
-		grid_step=8; // 16 is what they used in the article
+		grid_step=16; // 16 is what they used in the article
 		break;
 		case 4:
 		scale=1;
@@ -35,6 +35,7 @@ void synth_texture::update_level(int level){
 	current_size_in = Size(raw_image.size().width/scale, raw_image.size().height/scale);
 	cout << "current size out     :" << current_size_out << endl;
 	cout << "current size texture :" << current_size_in << endl;
+	cout << "gridstep :" << grid_step << endl;
 
 	// rescale
 	if(level==0)
