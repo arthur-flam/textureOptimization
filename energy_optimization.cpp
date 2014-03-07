@@ -58,9 +58,8 @@ void synth_texture::setup_matrix(){
   nlBegin(NL_MATRIX);
   int counter=0;
   Vec3d sum_color_sources;
-  int n;
   double sum_weight; // gridpoints closer are more important
-  double weight;     // we use a gaussian measure - the window should be cross validated
+  double weight;
    // for all points    
   for(int v=0; v<out_height; ++v){
     for(int h=0; h<out_width; ++h){
@@ -80,19 +79,14 @@ void synth_texture::setup_matrix(){
 	        Vec2b source_point = Zp.at<Vec2b>(grid_point); // source gridpoints coordinates in texture
 	        Point source_coords = Point(source_point[0]-h_to_grid, source_point[1]-v_to_grid);
 
-           double norm = to_grid_point.dot(to_grid_point);
-           weight= exp(-norm*norm/(2*grid_step));
-           //cout << weight << ", ";
+           weight = grid_step - sqrt(to_grid_point.x*to_grid_point.x + to_grid_point.y*to_grid_point.y)/grid_step;
            sum_weight+=weight;
-           ++n;
 	        for(int color=0; color<3; ++color)
-             sum_color_sources[color] += (double) image.at<Vec3b>(source_coords)[color];
-             //sum_color_sources[color] += (double) image.at<Vec3b>(source_coords)[color] * weight;
+             sum_color_sources[color] += (double) image.at<Vec3b>(source_coords)[color] * weight;
          }
         }
         for(int color=0; color<3; ++color){
-           nlRowParameterd(NL_RIGHT_HAND_SIDE, (NLdouble) -sum_color_sources[color]/n);     // b term
-           //nlRowParameterd(NL_RIGHT_HAND_SIDE, (NLdouble) -sum_color_sources[color]/sum_weight);     // b term
+           nlRowParameterd(NL_RIGHT_HAND_SIDE, (NLdouble) -sum_color_sources[color]/sum_weight);     // b term
    	     nlBegin(NL_ROW);
    	     nlCoefficient(counter++, (NLdouble) 1);
    	     nlEnd(NL_ROW);
