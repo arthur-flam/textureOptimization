@@ -6,10 +6,16 @@ void synth_texture::update_neighborhoods(){
 
 	// update kd-tree features
 	cout << "...computing features for kdtree" << endl;
-	out_image_bw = Mat(current_size_out, CV_32F);
-	cvtColor(out_image,out_image_bw,CV_RGB2GRAY);
-	image_bw = Mat(current_size_in, CV_32F);
-	cvtColor(image,image_bw,CV_RGB2GRAY);
+	Mat image_search, out_image_search; // versions used for source search
+	if(color==3){
+		image_search=image;
+		out_image_search=out_image;
+	} else{
+		out_image_search = Mat(current_size_out, CV_32F);
+		image_search = Mat(current_size_in, CV_32F);
+		cvtColor(out_image,out_image_search,CV_RGB2GRAY);
+		cvtColor(image,image_search,CV_RGB2GRAY);
+	}
 
 	numData = (in_height-2*grid_step)*(in_width-2*grid_step);
 	features = Mat(numData,pixelsInNeighborhood*color,CV_32F);
@@ -17,7 +23,7 @@ void synth_texture::update_neighborhoods(){
 	Mat neigh;
 	for(int v=grid_step; v<in_height-grid_step; ++v){
 		for(int h=grid_step; h<in_width-grid_step; ++h){
-			neigh = extract_neighborhood(image_bw, h, v);
+			neigh = extract_neighborhood(image_search, h, v);
 			neigh.convertTo(features.row(counter++),CV_32F);
 		}
 	}	
@@ -33,7 +39,7 @@ void synth_texture::update_neighborhoods(){
 	cout << "...updating origins" << endl;
 	for(int v=grid_step; v<=out_height-grid_step; v+=grid_step){
 		for(int h=grid_step; h<=out_width-grid_step; h+=grid_step){
-			extract_neighborhood(out_image_bw ,h, v).convertTo(query_m,CV_32F); // voisins de du point
+			extract_neighborhood(out_image_search ,h, v).convertTo(query_m,CV_32F); // voisins de du point
 
 
 			// update neighborhoods
@@ -51,7 +57,7 @@ void synth_texture::update_neighborhoods(){
 			double energy_p=0;
 			Mat neigh_source;
 			Vec2b source = Zp.at<Vec2b>(v,h);
-			extract_neighborhood(image_bw, source[0], source[1]).convertTo(neigh_source, CV_32F);
+			extract_neighborhood(image_search, source[0], source[1]).convertTo(neigh_source, CV_32F);
 			Mat diffs = neigh_source - query_m;
 			for (int i=0;i<pixelsInNeighborhood*color;i++){
 				double diff = diffs.at<float>(0,i); 
