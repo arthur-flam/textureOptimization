@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Textureoptimization by arthur-flam</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Textureoptimization</h1>
+        <p>Implementation of &quot;Texture Optimization for Example-based Synthesis&quot; by Vivek Kwatra at al.</p>
+
+        <p class="view"><a href="https://github.com/arthur-flam/textureOptimization">View the Project on GitHub <small>arthur-flam/textureOptimization</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/arthur-flam/textureOptimization/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/arthur-flam/textureOptimization/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/arthur-flam/textureOptimization">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="texture-optimization" class="anchor" href="#texture-optimization"><span class="octicon octicon-link"></span></a>Texture Optimization</h1>
+
+<p>Implementation of <a href="http://www.cc.gatech.edu/cpl/projects/textureoptimization/TO-final.pdf">"Texture Optimization for Example-based Synthesis"</a> by Vivek Kwatra at al.</p>
+
+<p>The output images are generated on 50 iterations.</p>
+
+<h2>
+<a name="try-it" class="anchor" href="#try-it"><span class="octicon octicon-link"></span></a>Try it</h2>
+
+<p>You can generate a single image:
+       cmake . &amp;&amp; make &amp;&amp; ./DisplayImage input/ztext.bmp</p>
+
+<p>Or all of them
+      ./test.sh</p>
+
+<h2>
+<a name="not-done" class="anchor" href="#not-done"><span class="octicon octicon-link"></span></a>Not done</h2>
+
+<ul>
+<li>the authors use a <em>memory efficient kd-tree</em>: they only record the position of the source and recover more info as needed.</li>
+<li>we should <em>compute the kdtree only once</em> per scale level, but I ran into odd segfaults errors as I tried...</li>
+<li>we don't compute origin patches for pixels on the edges. Nothing being done, it's very messy... We should get rid of those <em>edge issues</em> with some padding.</li>
+</ul><h2>
+<a name="comparaison-with-original-paper" class="anchor" href="#comparaison-with-original-paper"><span class="octicon octicon-link"></span></a>Comparaison with original paper</h2>
+
+<ul>
+<li>This implementation searches for similar patches using color information, not just intensity information.</li>
+<li>Performance needs some <em>tuning</em>: long-distance repetitive structures are not as nicely captured as in the paper. Tuning the initial scale should be enough to fix this.</li>
+<li>Flow-controled synthesis is not covered.</li>
+</ul><h2>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<ul>
+<li>cmake</li>
+<li><a href="http://docs.opencv.org/doc/tutorials/introduction/linux_install/linux_install.html">opencv</a></li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/arthur-flam">arthur-flam</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-42364112-3");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
