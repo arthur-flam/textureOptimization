@@ -8,6 +8,7 @@ Implementation of ["Texture Optimization for Example-based Synthesis"](http://ww
 ```r
 cmake . && make && ./DisplayImage input/ztext.bmp
 ```
+=======
 
 ## To do ##
 

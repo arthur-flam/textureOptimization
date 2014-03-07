@@ -17,7 +17,7 @@ private:
   Mat raw_image;               // input texture
   int out_width, out_height, in_width, in_height;
   int grid_step, scale;        // grid parameter, also half neighborhood width
-  Size out_size,current_size_out;// size of the wanted/current synthetized image
+  Size out_size,current_size_out, current_size_in;// size of the wanted/current synthetized image
 public:
   Mat image;                   // input texture, rescaled as needed
   Mat out_image;               // output image
@@ -34,6 +34,8 @@ public:
 
   // create new image
   void synthetize();
+
+  flann::Index kdtree_shared;
 
 
 private:
@@ -53,7 +55,8 @@ private:
   void setup_matrix();
 
   // SOURCES
-  //flann::Index kdtree_s;
+  Mat out_image_bw, image_bw;
+  int color; // 1: BW, 3:Color
   void update_neighborhoods();
 
 

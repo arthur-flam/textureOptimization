@@ -18,7 +18,7 @@ void synth_texture::update_level(int level){
 		break;
 		case 3:
 		scale=1;
-		grid_step=16;
+		grid_step=12;
 		break;
 		case 4:
 		scale=1;
@@ -31,7 +31,7 @@ void synth_texture::update_level(int level){
 	} 
 	pixelsInNeighborhood = grid_step*grid_step*4;
 	current_size_out = Size((int) (out_size.width/scale), (int)(out_size.height/scale));
-	Size current_size_in = Size(raw_image.size().width/scale, raw_image.size().height/scale);
+	current_size_in = Size(raw_image.size().width/scale, raw_image.size().height/scale);
 	cout << "current size out     :" << current_size_out << endl;
 	cout << "current size texture :" << current_size_in << endl;
 	if(level==0)
