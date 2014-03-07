@@ -11,6 +11,8 @@
 using namespace cv;
 using namespace std;
 
+#define COLOR_BW 1
+#define COLOR_RGB 3
 
 class synth_texture{
 private:

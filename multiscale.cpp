@@ -19,7 +19,7 @@ void synth_texture::update_level(int level){
 		break;
 		case 3:
 		scale=1;
-		grid_step=12; // 16 is what they used in the article
+		grid_step=8; // 16 is what they used in the article
 		break;
 		case 4:
 		scale=1;

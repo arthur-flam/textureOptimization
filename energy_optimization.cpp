@@ -56,20 +56,17 @@ void synth_texture::solver_to_image(){
 // send image information to solver
 void synth_texture::setup_matrix(){
   nlBegin(NL_MATRIX);
+   // for all pixels in the image    
   int counter=0;
-  Vec3d sum_color_sources;
-  double sum_weight; // gridpoints closer are more important
-  double weight;
-   // for all points    
   for(int v=0; v<out_height; ++v){
     for(int h=0; h<out_width; ++h){
-	     Point p = Point(h, v); // x,y
-	     // for neighbooring gridpoints
-	     sum_color_sources=Vec3d(0,0,0); // double pour éviter les overflows.....
-	     sum_weight=0;
-        n=0;
-	     for(int h_dir=0; h_dir<2;++h_dir){
-         for(int v_dir=0; v_dir<2; ++v_dir){
+	     Point p = Point(h, v);
+        // for its neighbooring gridpoints
+	     Vec3d sum_color_sources=Vec3d(0,0,0); // we need to do a weighted average of the values at gridpoint around a given pixel 
+        double weight;                        // gridpoints closer are more important
+        double sum_weight=0;
+	     for(int h_dir=0; h_dir<2;++h_dir){    // up or down 
+         for(int v_dir=0; v_dir<2; ++v_dir){  // left or right
           int h_to_grid = -(h % grid_step) + h_dir*grid_step;
           int v_to_grid = -(v % grid_step) + v_dir*grid_step;
           Point to_grid_point = Point(h_to_grid, v_to_grid);
@@ -78,7 +75,6 @@ void synth_texture::setup_matrix(){
             continue;
 	        Vec2b source_point = Zp.at<Vec2b>(grid_point); // source gridpoints coordinates in texture
 	        Point source_coords = Point(source_point[0]-h_to_grid, source_point[1]-v_to_grid);
-
            weight = grid_step - sqrt(to_grid_point.x*to_grid_point.x + to_grid_point.y*to_grid_point.y)/grid_step;
            sum_weight+=weight;
 	        for(int color=0; color<3; ++color)

@@ -16,7 +16,7 @@ synth_texture::synth_texture(Mat texture, Size size){
   max_iter=500;
   level=0;
   update_level(level);
-  color = 1; // Do we use color or intensity for source optimization ? 3 for color 
+  color=COLOR_BW; // for source optimization. /or COLOR_RGB 
 };
 
 Mat synth_texture::extract_neighborhood(Mat M, int h, int v){
@@ -30,10 +30,9 @@ void synth_texture::synthetize(){
     moveWindow("Output", 10, 50);
     moveWindow("Texture", 10, 500); waitKey(10);
 
-    //imshow( "Output", out_image_bw );imshow( "Texture", image_bw );waitKey(1000);
-
     // Initialize neighboroods randomly 
     randu(Zp, Scalar(grid_step+1,grid_step+1), Scalar(in_width-grid_step-1, in_height-grid_step-1));
+    int iter_at_scale=1;
     for(int iter=1;iter<max_iter;++iter){
       // Alternatively optimize for energy and source locations
       cout << "==== iteration [" << iter << "] ===="<<endl;
@@ -42,11 +41,13 @@ void synth_texture::synthetize(){
       update_neighborhoods();
 
       // Change scale if needed
+      ++iter_at_scale;
       double improv = abs(energy_previous-energy)/energy_previous;
-      double treshold = pow(10,-level-0.5);
+      double treshold = pow(10,-level-1);
       cout << "...improvement: " << improv;
-      cout << " (next level: 10e" << -level/2-1 << ")" << endl;
-      if(improv<treshold){ // we refine progressively
+      cout << " (next level: 10e" << -level-1 << ")" << endl;
+      if(improv<treshold || iter_at_scale>10){ // we refine progressively
+       iter_at_scale=1;
        if(level>5) return;
        update_level(++level);
        update_neighborhoods();

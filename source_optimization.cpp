@@ -2,15 +2,16 @@
 
 
 void synth_texture::update_neighborhoods(){
-	// create hierachical structure for fast SearchParam
+	// Create hierachical structure for fast SearchParam
 
 	// update kd-tree features
+	// this should be done once for every scale...
 	cout << "...computing features for kdtree" << endl;
 	Mat image_search, out_image_search; // versions used for source search
-	if(color==3){
+	if(color==COLOR_RGB){
 		image_search=image;
 		out_image_search=out_image;
-	} else{
+	} else if(color==COLOR_BW){
 		out_image_search = Mat(current_size_out, CV_32F);
 		image_search = Mat(current_size_in, CV_32F);
 		cvtColor(out_image,out_image_search,CV_RGB2GRAY);
@@ -40,7 +41,6 @@ void synth_texture::update_neighborhoods(){
 	for(int v=grid_step; v<=out_height-grid_step; v+=grid_step){
 		for(int h=grid_step; h<=out_width-grid_step; h+=grid_step){
 			extract_neighborhood(out_image_search ,h, v).convertTo(query_m,CV_32F); // voisins de du point
-
 
 			// update neighborhoods
 			vector<float> singleQuery;
