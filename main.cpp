@@ -7,7 +7,7 @@
 synth_texture::synth_texture(Mat texture, Size size){
   out_size = size;
   raw_image = texture;
-  max_iter=10;
+  max_iter=50;
   level=0;
   update_level(level);
   color=COLOR_BW; // for source optimization. /or COLOR_RGB 

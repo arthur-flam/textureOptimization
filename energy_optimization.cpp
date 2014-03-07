@@ -2,6 +2,7 @@
 
 
 void synth_texture::minimize_energy(){
+  cout << "...starting energy optimization" << endl;
     //resize(image, out_image, current_size_out);
   nlNewContext(); 
   nlSolverParameteri(NL_PRECONDITIONER, NL_PRECOND_JACOBI);
@@ -16,10 +17,10 @@ void synth_texture::minimize_energy(){
    //solver_to_image();
     //return;
 
-  std::cout << "...solving" << std::endl ;
+  std::cout << "......solving" << std::endl ;
   nlSolve() ;
  // recover results and clean up
-  cout << "...recovering results" << endl ;
+  cout << "......recovering results" << endl ;
   solver_to_image();
 
 
@@ -28,6 +29,7 @@ void synth_texture::minimize_energy(){
 
 // send initial guess to solver internals
 void synth_texture::image_to_solver(){
+  std::cout << "......image to solver (init)" << std::endl ;
   int counter=0;
   for(int v=0; v<out_height; ++v){
     for(int h=0; h<out_width; ++h){
@@ -41,6 +43,7 @@ void synth_texture::image_to_solver(){
 
   // recover solution from solver internals
 void synth_texture::solver_to_image(){
+  cout << "......solver to image" << endl ;
   int counter=0;
   for(int v=0; v<out_height; ++v){
     for(int h=0; h<out_width; ++h){
@@ -55,6 +58,7 @@ void synth_texture::solver_to_image(){
 
 // send image information to solver
 void synth_texture::setup_matrix(){
+  cout << "......image to solver (params)" << std::endl ;
   nlBegin(NL_MATRIX);
    // for all pixels in the image    
   int counter=0;
@@ -79,14 +83,19 @@ void synth_texture::setup_matrix(){
           
           // Robust optimization
           // -> is the gridpoint close ?
-          weight_spatial = grid_step - sqrt(to_grid_point.x*to_grid_point.x + to_grid_point.y*to_grid_point.y)/grid_step;
-          // -> is this gridpoint an outlier ?
-          Mat n_source = extract_neighborhood(image ,source_point[0], source_point[1]);
-          Mat n_out = extract_neighborhood(out_image,grid_point.x,grid_point.y);
-          Mat diff = n_out-n_source;
-          double norm = sqrt(diff.dot(diff));
-          double r=0.8;
-          weight_similarity = min(pow(norm,r-2),1.0);
+          if(grid_point.x<=current_size_out.width-grid_step && grid_point.y<=current_size_out.height-grid_step && grid_point.x>=grid_step && grid_point.y>=grid_step){
+             weight_spatial = grid_step - sqrt(to_grid_point.x*to_grid_point.x + to_grid_point.y*to_grid_point.y)/grid_step;
+             // -> is this gridpoint an outlier ?
+             Mat n_source = extract_neighborhood(image ,source_point[0], source_point[1]);
+             //cout << ".........done neighs1" << endl ;
+             //cout << out_image.size() << "   on " << grid_point << grid_step<< endl;
+             Mat n_out = extract_neighborhood(out_image,grid_point.x,grid_point.y);
+             //cout << ".........done neighs2" << endl ;
+             Mat diff = n_out-n_source;
+             double norm = sqrt(diff.dot(diff));
+             double r=0.8;
+             weight_similarity = min(pow(norm,r-2),1.0);
+          }
           double weight = weight_similarity*weight_spatial;
           sum_weight+=weight;
 	       for(int color=0; color<3; ++color)
