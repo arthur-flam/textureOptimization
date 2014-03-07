@@ -52,6 +52,7 @@ void synth_texture::update_neighborhoods(){
 			int h_ = index[0]%(in_width-2*grid_step) + grid_step;
 			int v_ = (index[0]-h_+grid_step)/(in_width-2*grid_step) + grid_step;
 			Zp.at<Vec2b>(v, h) = Vec2b(h_, v_);
+			assert(h_>=grid_step && v_>=grid_step); // sanity check
 
 			// update energy
 			double energy_p=0;

@@ -63,7 +63,8 @@ void synth_texture::setup_matrix(){
 	     Point p = Point(h, v);
         // for its neighbooring gridpoints
 	     Vec3d sum_color_sources=Vec3d(0,0,0); // we need to do a weighted average of the values at gridpoint around a given pixel 
-        double weight;                        // gridpoints closer are more important
+        double weight_spatial;                        // gridpoints closer are more important
+        double weight_similarity=1;                     // gridpoints more similar are more important
         double sum_weight=0;
 	     for(int h_dir=0; h_dir<2;++h_dir){    // up or down 
          for(int v_dir=0; v_dir<2; ++v_dir){  // left or right
@@ -72,13 +73,24 @@ void synth_texture::setup_matrix(){
           Point to_grid_point = Point(h_to_grid, v_to_grid);
           Point grid_point = p + to_grid_point;
           if(grid_point.x<=0 || grid_point.y<=0 || grid_point.y>=out_height || grid_point.x>=out_width)
-            continue;
-	        Vec2b source_point = Zp.at<Vec2b>(grid_point); // source gridpoints coordinates in texture
-	        Point source_coords = Point(source_point[0]-h_to_grid, source_point[1]-v_to_grid);
-           weight = grid_step - sqrt(to_grid_point.x*to_grid_point.x + to_grid_point.y*to_grid_point.y)/grid_step;
-           sum_weight+=weight;
-	        for(int color=0; color<3; ++color)
-             sum_color_sources[color] += (double) image.at<Vec3b>(source_coords)[color] * weight;
+            continue; // -> out of bounds
+	       Vec2b source_point = Zp.at<Vec2b>(grid_point); // source gridpoints coordinates in texture
+	       Point source_coords = Point(source_point[0]-h_to_grid, source_point[1]-v_to_grid);
+          
+          // Robust optimization
+          // -> is the gridpoint close ?
+          weight_spatial = grid_step - sqrt(to_grid_point.x*to_grid_point.x + to_grid_point.y*to_grid_point.y)/grid_step;
+          // -> is this gridpoint an outlier ?
+          Mat n_source = extract_neighborhood(image ,source_point[0], source_point[1]);
+          Mat n_out = extract_neighborhood(out_image,grid_point.x,grid_point.y);
+          Mat diff = n_out-n_source;
+          double norm = sqrt(diff.dot(diff));
+          double r=0.8;
+          weight_similarity = min(pow(norm,r-2),1.0);
+          double weight = weight_similarity*weight_spatial;
+          sum_weight+=weight;
+	       for(int color=0; color<3; ++color)
+               sum_color_sources[color] += (double) image.at<Vec3b>(source_coords)[color] * weight;
          }
         }
         for(int color=0; color<3; ++color){
