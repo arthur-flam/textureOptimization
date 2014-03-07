@@ -1,19 +1,13 @@
-#include <stdio.h>
-#include <opencv2/opencv.hpp>
-#include <iostream>
-#include "NL/nl.h"
-#include <math.h>
-
 #include "synth_texture.h"
 
-using namespace cv;
-using namespace std;
+#include <sstream>
+#include <string>
 
 
 synth_texture::synth_texture(Mat texture, Size size){
   out_size = size;
   raw_image = texture;
-  max_iter=500;
+  max_iter=10;
   level=0;
   update_level(level);
   color=COLOR_BW; // for source optimization. /or COLOR_RGB 
@@ -85,7 +79,10 @@ void synth_texture::synthetize(){
   out.synthetize();
   
   // 3. Output and save result
-  imwrite( "out.jpg", out.out_image );
+  string input_name = string(argv[1]);
+  string filename = "output/"+input_name;
+  imwrite(filename,out.out_image);
+
 
   waitKey(0);                                          // Wait for a keystroke in the window
   cout << "programm ended" << endl;
