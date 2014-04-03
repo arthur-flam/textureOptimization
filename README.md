@@ -5,15 +5,20 @@ Implementation of ["Texture Optimization for Example-based Synthesis"](http://ww
 
 The output images are generated on 50 iterations.
 
-## Try it
+![Radishes input](https://github.com/arthur-flam/textureOptimization/blob/master/input/radishes_sc_scale.bmp?raw=true)
+
+![Radishes output](https://github.com/arthur-flam/textureOptimization/blob/master/output/input/radishes_sc_scale.bmp?raw=true)
+
+
+## Try it ##
 
 You can generate a single image:
-```r
+```sh
 cmake . && make && ./DisplayImage input/ztext.bmp
 ```
 
 Or all of them
-```r
+```sh
 ./test.sh
 ```
 
